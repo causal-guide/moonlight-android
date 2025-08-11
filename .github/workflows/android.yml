@@ -2,9 +2,9 @@ name: Build Moonlight Android APK
 
 on:
   push:
-    branches: [ "moonlight-noir" ]
+    branches: [ moonlight-noir ]
   pull_request:
-    branches: [ "moonlight-noir" ]
+    branches: [ moonlight-noir ]
   workflow_dispatch:
 
 jobs:
@@ -28,10 +28,11 @@ jobs:
 
     - name: Install NDK and write local.properties
       run: |
-        # install specific NDK version (ubah versi bila perlu)
         sdkmanager --install "ndk;26.3.11579264"
-        mkdir -p moonlight-android
         echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/26.3.11579264" > moonlight-android/local.properties
+
+    - name: Make gradlew executable
+      run: chmod +x moonlight-android/gradlew
 
     - name: Build APK (debug)
       working-directory: moonlight-android
@@ -41,4 +42,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Moonlight-Android-APK
-        path: moonlight-android/app/build/outputs/apk/**/**/*.apk
+        path: moonlight-android/app/build/outputs/apk/debug/*.apk
