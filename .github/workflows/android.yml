@@ -15,12 +15,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: false  # init manual biar bisa cek error
+        submodules: false
 
-    - name: Init submodules
+    - name: Prepare moonlight-android source
       run: |
-        git submodule update --init --recursive
-        ls -la
+        if [ -f .gitmodules ] && grep -q "moonlight-android" .gitmodules; then
+          echo "===> Init submodule moonlight-android"
+          git submodule update --init --recursive
+        else
+          echo "===> Cloning moonlight-android repo manually"
+          git clone https://github.com/moonlight-stream/moonlight-android.git moonlight-android
+        fi
+        ls -la moonlight-android
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -31,10 +37,9 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Install NDK and write local.properties
+    - name: Install NDK and create local.properties
       run: |
         sdkmanager --install "ndk;26.3.11579264"
-        mkdir -p moonlight-android
         echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/26.3.11579264" > moonlight-android/local.properties
         cat moonlight-android/local.properties
 
