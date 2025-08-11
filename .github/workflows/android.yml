@@ -12,10 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository (with submodules)
+    - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false  # init manual biar bisa cek error
+
+    - name: Init submodules
+      run: |
+        git submodule update --init --recursive
+        ls -la
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -29,7 +34,9 @@ jobs:
     - name: Install NDK and write local.properties
       run: |
         sdkmanager --install "ndk;26.3.11579264"
+        mkdir -p moonlight-android
         echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/26.3.11579264" > moonlight-android/local.properties
+        cat moonlight-android/local.properties
 
     - name: Make gradlew executable
       run: chmod +x moonlight-android/gradlew
