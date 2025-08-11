@@ -24,10 +24,7 @@ jobs:
     - name: Install Android SDK & NDK
       uses: android-actions/setup-android@v3
       with:
-        packages: |
-          platform-tools
-          build-tools;34.0.0
-          ndk;25.2.9519653
+        packages: "platform-tools,build-tools;34.0.0,ndk;25.2.9519653"
 
     - name: Update git submodules
       run: git submodule update --init --recursive
